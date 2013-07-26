@@ -8,6 +8,8 @@ import weka.classifiers.functions.SMO;
 import weka.classifiers.trees.J48;
 import weka.classifiers.lazy.IB1;
 import weka.classifiers.lazy.IBk;
+import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.rules.ZeroR;
 import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.EM;
 import weka.core.Attribute;
@@ -35,14 +37,14 @@ public class WekaRecommend1 {
         Instances dataTest = new Instances(new BufferedReader(new FileReader(TESTFILE)));
         dataTest.setClassIndex(dataTest.numAttributes() - 1);
         // train clasiffier
-        final Classifier cf = new SMO();
+        final Classifier cf = new LinearRegression();
         cf.buildClassifier(data);
 
         // make predictions
         for (int i = 0; i < dataTest.numInstances(); i++) {
             double pred = cf.classifyInstance(dataTest.instance(i));
             System.out.print("Prod_ID: " + dataTest.instance(i).value(1));
-            System.out.print(", actual: " + dataTest.instance(i).value(2));
+            System.out.print(", actual: " + data.instance(i).classValue());
             System.out.println(", predicted: " +  pred);
         }
 
