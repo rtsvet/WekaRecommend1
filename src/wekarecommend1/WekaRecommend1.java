@@ -17,13 +17,15 @@ import weka.core.Debug;
 import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.SelectedTag;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.attribute.StringToWordVector;
+import weka.core.neighboursearch.*;
 
 public class WekaRecommend1 {
 
-    private static final String DATAFILE = "pref-train.arff";
+    private static final String DATAFILE = "pref-nominal-train.arff";
     private static final String TESTFILE = "pref-test.arff";
 
     public static void main(final String[] args) throws Exception {
@@ -37,15 +39,19 @@ public class WekaRecommend1 {
         Instances dataTest = new Instances(new BufferedReader(new FileReader(TESTFILE)));
         dataTest.setClassIndex(dataTest.numAttributes() - 1);
         // train clasiffier
-        final Classifier cf = new LinearRegression();
+        
+        NearestNeighbourSearch nnS = new LinearNNSearch();
+        IBk cf = new IBk(1);
+        cf.setNearestNeighbourSearchAlgorithm(nnS);
+        
+        System.out.println("Neares Neighbour " + cf.getNearestNeighbourSearchAlgorithm());
         cf.buildClassifier(data);
 
         // make predictions
         for (int i = 0; i < dataTest.numInstances(); i++) {
             double pred = cf.classifyInstance(dataTest.instance(i));
             System.out.print("Prod_ID: " + dataTest.instance(i).value(1));
-            System.out.print(", actual: " + data.instance(i).classValue());
-            System.out.println(", predicted: " +  pred);
+            System.out.println(", predicted: " + dataTest.classAttribute().value((int) pred));
         }
 
 
